@@ -5,7 +5,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
+# -----------------------------------------
 # XAMPP MySQL Connection
+# -----------------------------------------
+
 db = mysql.connector.connect(
     host="localhost",
     user="root",
@@ -19,13 +22,19 @@ cursor = db.cursor()
 print("Database Connected Successfully!")
 
 
-# Home page
+# -----------------------------------------
+# HOME PAGE
+# -----------------------------------------
+
 @app.route("/")
 def home():
     return redirect(url_for("signup"))
 
 
+# -----------------------------------------
 # SIGNUP PAGE
+# -----------------------------------------
+
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
 
@@ -40,7 +49,7 @@ def signup():
         username = request.form.get("username")
         password = request.form.get("password")
 
-        # Check username already exists
+        # Check whether username already exists
         cursor.execute(
             "SELECT id FROM student_list WHERE username = %s",
             (username,)
@@ -52,18 +61,22 @@ def signup():
             message = "Username already exists!"
 
         else:
-            # Hash password before storing
+            # Hash password
             hashed_password = generate_password_hash(password)
 
             query = """
-            INSERT INTO student_list
-            (name, roll_no, address, phone_number, username, password)
-            VALUES (%s, %s, %s, %s, %s, %s)
+                INSERT INTO student_list
+                (name, roll_no, address, phone_number, username, password)
+                VALUES (%s, %s, %s, %s, %s, %s)
             """
 
             values = (
-                name, roll_no, address,
-                phone_number, username, hashed_password
+                name,
+                roll_no,
+                address,
+                phone_number,
+                username,
+                hashed_password
             )
 
             cursor.execute(query, values)
@@ -76,7 +89,10 @@ def signup():
     return render_template("signup.html", message=message)
 
 
+# -----------------------------------------
 # LOGIN PAGE
+# -----------------------------------------
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
 
@@ -88,9 +104,9 @@ def login():
         password = request.form.get("password")
 
         query = """
-        SELECT id, name, password
-        FROM student_list
-        WHERE username = %s
+            SELECT id, name, password
+            FROM student_list
+            WHERE username = %s
         """
 
         cursor.execute(query, (username,))
@@ -108,5 +124,14 @@ def login():
     return render_template("login.html", message=message)
 
 
+# -----------------------------------------
+# RUN FLASK APPLICATION
+# -----------------------------------------
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(
+        host="127.0.0.1",
+        port=5000,
+        debug=True,
+        use_reloader=False
+    )

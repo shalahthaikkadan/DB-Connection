@@ -1,49 +1,527 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Student Signup</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-light: #eef2ff;
+            --text-heading: #0f172a;
+            --text-body: #334155;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --border-focus: #6366f1;
+            --card-bg: #ffffff;
+            --success-bg: #ecfdf5;
+            --success-text: #065f46;
+            --success-border: #a7f3d0;
+            --error-bg: #fef2f2;
+            --error-text: #991b1b;
+            --error-border: #fecaca;
+            --radius-card: 20px;
+            --radius-input: 12px;
+            --shadow-card: 0 12px 36px -8px rgba(15, 23, 42, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 60%, #312e81 100%);
+            padding: 1.5rem;
+            color: var(--text-body);
+            position: relative;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 580px;
+            background: var(--card-bg);
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-card);
+            padding: clamp(2rem, 5vw, 2.75rem);
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-icon-badge {
+            width: 52px;
+            height: 52px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .auth-icon-badge svg {
+            width: 26px;
+            height: 26px;
+        }
+
+        .auth-header h1 {
+            font-size: 1.65rem;
+            font-weight: 700;
+            color: var(--text-heading);
+            letter-spacing: -0.02em;
+        }
+
+        .auth-header p {
+            color: var(--text-muted);
+            font-size: 0.925rem;
+            margin-top: 0.35rem;
+        }
+
+        /* Alert message */
+        .alert-box {
+            padding: 0.85rem 1rem;
+            border-radius: var(--radius-input);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            border: 1px solid transparent;
+        }
+
+        .alert-error {
+            background-color: var(--error-bg);
+            color: var(--error-text);
+            border-color: var(--error-border);
+        }
+
+        .alert-success {
+            background-color: var(--success-bg);
+            color: var(--success-text);
+            border-color: var(--success-border);
+        }
+
+        .alert-box svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        /* Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem 1rem;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-heading);
+            margin-bottom: 0.45rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            transition: color 0.2s ease;
+        }
+
+        .input-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .form-input {
+            width: 100%;
+            height: 48px;
+            padding: 0 1rem 0 2.85rem;
+            font-size: 0.95rem;
+            color: var(--text-heading);
+            background: #f8fafc;
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-input);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .form-input::placeholder {
+            color: #94a3b8;
+        }
+
+        .form-input:focus {
+            background: #ffffff;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .input-wrapper:focus-within .input-icon {
+            color: var(--primary);
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 0.75rem;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            padding: 0.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: color 0.2s ease;
+        }
+
+        .toggle-password:hover {
+            color: var(--text-body);
+        }
+
+        .toggle-password svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Submit Button */
+        .btn-submit {
+            width: 100%;
+            height: 48px;
+            margin-top: 1.5rem;
+            background: var(--primary);
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: var(--radius-input);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-hover);
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        /* Footer Link */
+        .form-footer {
+            margin-top: 1.75rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .form-footer a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+
+        .form-footer a:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 540px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 1.15rem;
+            }
+        }
+    </style>
 </head>
 <body>
 
-    <h2>Student Registration</h2>
+    <main class="auth-container">
+        <!-- Header -->
+        <div class="auth-header">
+            <div class="auth-icon-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="8.5" cy="7" r="4"></circle>
+                    <line x1="20" y1="8" x2="20" y2="14"></line>
+                    <line x1="23" y1="11" x2="17" y2="11"></line>
+                </svg>
+            </div>
+            <h1>Create Account</h1>
+            <p>Fill in your details to get started</p>
+        </div>
 
-    <form method="POST">
+        <!-- Feedback Alert Messages -->
+        {% if message %}
+            {% if "success" in message.lower() %}
+            <div class="alert-box alert-success" role="alert">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <span>{{ message }}</span>
+            </div>
+            {% else %}
+            <div class="alert-box alert-error" role="alert">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span>{{ message }}</span>
+            </div>
+            {% endif %}
+        {% endif %}
 
-        <input type="text" name="name"
-        placeholder="Enter Name" required>
-        <br><br>
+        <!-- Form -->
+        <form method="POST" id="signupForm" novalidate>
+            <div class="form-grid">
+                <!-- Full Name -->
+                <div class="form-group">
+                    <label class="form-label" for="name">Full Name</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </span>
+                        <input 
+                            type="text" 
+                            id="name" 
+                            name="name" 
+                            class="form-input" 
+                            placeholder="Full Name" 
+                            required 
+                            autocomplete="name"
+                        >
+                    </div>
+                </div>
 
-        <input type="text" name="roll_no"
-        placeholder="Enter Roll Number" required>
-        <br><br>
+                <!-- Roll Number -->
+                <div class="form-group">
+                    <label class="form-label" for="roll_no">Roll Number</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                                <path d="M7 15h0M2 9h20"></path>
+                            </svg>
+                        </span>
+                        <input 
+                            type="text" 
+                            id="roll_no" 
+                            name="roll_no" 
+                            class="form-input" 
+                            placeholder="e.g. 21CS042" 
+                            required 
+                            autocapitalize="characters"
+                        >
+                    </div>
+                </div>
 
-        <input type="text" name="address"
-        placeholder="Enter Address" required>
-        <br><br>
+                <!-- Phone Number -->
+                <div class="form-group">
+                    <label class="form-label" for="phone_number">Phone Number</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                            </svg>
+                        </span>
+                        <input 
+                            type="tel" 
+                            id="phone_number" 
+                            name="phone_number" 
+                            class="form-input" 
+                            placeholder="Phone Number" 
+                            required 
+                            autocomplete="tel"
+                        >
+                    </div>
+                </div>
 
-        <input type="text" name="phone_number"
-        placeholder="Enter Phone Number" required>
-        <br><br>
+                <!-- Address -->
+                <div class="form-group">
+                    <label class="form-label" for="address">Address</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                        </span>
+                        <input 
+                            type="text" 
+                            id="address" 
+                            name="address" 
+                            class="form-input" 
+                            placeholder="Address" 
+                            required 
+                            autocomplete="street-address"
+                        >
+                    </div>
+                </div>
 
-        <input type="text" name="username"
-        placeholder="Enter Username" required>
-        <br><br>
+                <!-- Username -->
+                <div class="form-group">
+                    <label class="form-label" for="username">Username</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="4"></circle>
+                                <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"></path>
+                            </svg>
+                        </span>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username" 
+                            class="form-input" 
+                            placeholder="Choose Username" 
+                            required 
+                            autocomplete="username"
+                            spellcheck="false"
+                            autocapitalize="none"
+                        >
+                    </div>
+                </div>
 
-        <input type="password" name="password"
-        placeholder="Enter Password" required>
-        <br><br>
+                <!-- Password -->
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                        </span>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="form-input" 
+                            placeholder="Create Password" 
+                            required 
+                            autocomplete="new-password"
+                            style="padding-right: 2.75rem;"
+                        >
+                        <button 
+                            type="button" 
+                            class="toggle-password" 
+                            id="togglePassword" 
+                            aria-label="Toggle password visibility"
+                            title="Show/hide password"
+                        >
+                            <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-        <button type="submit">Sign Up</button>
+            <!-- Submit Button -->
+            <button type="submit" class="btn-submit" id="submitBtn">
+                <span>Sign Up</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </button>
+        </form>
 
-    </form>
+        <div class="form-footer">
+            Already have an account? <a href="/login">Sign In</a>
+        </div>
+    </main>
 
-    <p>{{ message }}</p>
+    <script>
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eyeIcon');
 
-    <p>
-        Already have an account?
-        <a href="/login">Login Here</a>
-    </p>
+        if (togglePassword && passwordInput && eyeIcon) {
+            togglePassword.addEventListener('click', function () {
+                const isPassword = passwordInput.getAttribute('type') === 'password';
+                passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
 
+                if (isPassword) {
+                    eyeIcon.innerHTML = `
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                    `;
+                    togglePassword.setAttribute('aria-label', 'Hide password');
+                } else {
+                    eyeIcon.innerHTML = `
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    `;
+                    togglePassword.setAttribute('aria-label', 'Show password');
+                }
+            });
+        }
+    </script>
 </body>
 </html>
